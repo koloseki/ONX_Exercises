@@ -60,4 +60,50 @@ $numericInput->add("abc");
 echo $numericInput->getValue();  // Output: 123123
 
 
+echo '<br>';
+//Exercise 3
+
+
+class RankingTable {
+    private $players = array();
+
+    public function __construct($playerNames) {
+        foreach ($playerNames as $name) {
+            $this->players[$name] = array(
+                'score' => 0,
+                'gamesPlayed' => 0
+            );
+        }
+    }
+
+    public function recordResult($playerName, $score) {
+        if (isset($this->players[$playerName])) {
+            $this->players[$playerName]['score'] += $score;
+            $this->players[$playerName]['gamesPlayed']++;
+        }
+    }
+
+    public function playerRank($rank) {
+        // Sorting players based on score in descending order
+        uasort($this->players, function($a, $b) {
+            if ($a['score'] === $b['score']) {
+                if ($a['gamesPlayed'] === $b['gamesPlayed']) {
+                    return strcmp(array_search($a, $this->players), array_search($b, $this->players));
+                }
+                return $a['gamesPlayed'] - $b['gamesPlayed'];
+            }
+            return $b['score'] - $a['score'];
+        });
+
+        // Finding the player at the specified rank
+        $rankedPlayers = array_keys($this->players);
+        return $rankedPlayers[$rank - 1] ?? null;
+    }
+}
+
+$table = new RankingTable(array('Jan', 'Maks', 'Monika'));
+$table->recordResult('Jan', 2);
+$table->recordResult('Maks', 3);
+$table->recordResult('Monika', 5);
+echo $table->playerRank(1);  // Output: "Monika"
 
